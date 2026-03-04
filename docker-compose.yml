@@ -1,0 +1,10 @@
+
+services:
+  fastapi:
+    build: .
+    container_name: filter-columns
+    ports:
+      - "8788:8788"
+    volumes:
+      - ./tmp:/app/tmp
+    restart: unless-stopped

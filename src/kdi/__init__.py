@@ -1,0 +1,1 @@
+from .generate_report import generate_kdi_report
