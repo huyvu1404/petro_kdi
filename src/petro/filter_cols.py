@@ -34,10 +34,7 @@ def process_zip_excel(
 
     # ---------- Read Excel ----------
     df = sanitize_excel_values(pd.read_excel(excel_file))
-    df["PublishedDate"] = pd.to_datetime(
-        df["PublishedDate"],
-        errors="coerce"
-    )
+
     df = df[
         (df["Sentiment"].str.strip() == "Neutral") &
         (df["Channel"].str.strip() == "News")
@@ -54,9 +51,7 @@ def process_zip_excel(
     df_new = df[selected_columns]
     df_new = df_new.sort_values(by="PublishedDate", ascending=True)
     
-    # Add empty column at the end to prevent overflow
     df_new[" "] = " "
-
 
     def format_run_at(dt, hour, start=True):
         d = dt.replace(hour=hour, minute=0, second=0, microsecond=0)
@@ -123,11 +118,20 @@ def process_zip_excel(
             col_letter = get_column_letter(header_map[col_name])
             for cell in ws[col_letter][1:]:
                 cell.alignment = Alignment(horizontal="center", vertical="center")
-    # Date format
     if "PublishedDate" in header_map:
         col_letter = get_column_letter(header_map["PublishedDate"])
+
         for cell in ws[col_letter][1:]:
-            cell.number_format = "DD/MM/YYYY"            
+            if cell.value:
+                # Convert sang datetime nếu là string
+                if isinstance(cell.value, str):
+                    try:
+                        cell.value = datetime.fromisoformat(cell.value)
+                    except:
+                        pass
+
+                # Set format hiển thị
+                cell.number_format = "DD/MM/YYYY"        
     # Auto column width (exclude last column)
     for col_idx, col in enumerate(ws.iter_cols(), start=1):
         if col_idx < ws.max_column:  # Skip last column
