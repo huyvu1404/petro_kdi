@@ -78,11 +78,11 @@ def _process_weekly(current_files: list[str],
         raise ValueError("Missing Excel files for weekly report")
 
     # Process data for HTML report (with fill=True to merge Title/Description into Content)
-    current_data_html = process_excel(current_files, True)
-    last_week_data_html = process_excel(last_week_files, True)
+    current_data_html = sanitize_excel_values(process_excel(current_files, True))
+    last_week_data_html = sanitize_excel_values(process_excel(last_week_files, True))
     
     # Process data for Excel export (with fill=False to keep Title and Description columns)
-    current_data_excel = process_excel(current_files, False)
+    current_data_excel = sanitize_excel_values(process_excel(current_files, False))
     
     # Apply labels only for "La Tien Villa" topic
     if "Topic" in current_data_excel.columns:

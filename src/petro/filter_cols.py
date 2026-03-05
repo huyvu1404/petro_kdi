@@ -33,7 +33,7 @@ def process_zip_excel(
         )
 
     # ---------- Read Excel ----------
-    df = pd.read_excel(excel_file)
+    df = sanitize_excel_values(pd.read_excel(excel_file))
     df["PublishedDate"] = pd.to_datetime(
         df["PublishedDate"],
         errors="coerce"
@@ -83,7 +83,6 @@ def process_zip_excel(
         return f"{start} to {end}"
 
     output_xlsx = os.path.join(work_dir, f"Ngành xăng dầu_News Tổng hợp tin trung lập {get_run_at()}.xlsx")
-    df_new = sanitize_excel_values(df_new)
     # Fill empty cells with space to prevent overflow
     df_new = df_new.fillna(" ")
     df_new = df_new.replace("", " ")
